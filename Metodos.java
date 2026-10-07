@@ -1,23 +1,32 @@
 
 import java.util.Queue;
 import java.util.Scanner;
-import java.util.Stack;
+
 
 public class Metodos {
 
-    public Queue<ObjSancocho> LlenarCola(Queue<ObjSancocho> cola, Metodos m, Scanner sc) {
+    public Queue<ObjServicio> LlenarCola(Queue<ObjServicio> cola, Metodos m, Scanner sc) {
         boolean continuar = true;
 
         while (continuar) {
-            ObjSancocho o = new ObjSancocho();
+            ObjServicio o = new ObjServicio();
             o.setTurno(m.ValidarTurno(cola));
-            o.setName(m.MenuComida(sc));
-            System.out.println("Ingrese la cantidad ");
-            o.setCantidad(sc.nextInt());
-            System.out.println("Ingrese el precio ");
-            o.setPrice(sc.nextDouble());
-            o.setEstate(1);
-            System.out.println("Desea Agregar mas turnos 1 si , 2 no ");
+            System.out.println("Ingrese el documento del cliente: ");
+            o.setIdcliente(sc.nextInt());                              //(m.MenuComida(sc));
+            System.out.println("Ingrese el Origen del servicio (Ciudad) ");
+            o.setOrigen(sc.next());
+            System.out.println("Ingrese el Destino del servicio (Ciudad) ");
+            o.setDestino(sc.next());
+            System.out.println("Tipo de mercancia: 1.Electrodomesticos | 2.Perecederos | 3.Refacciones");
+            o.setTipo_Mercancia(sc.nextInt());
+            System.out.println("Ingrese el peso de la mercancía en KGs: ");
+            o.setPeso(sc.nextInt());
+            System.out.println("Seleccione la prioridad del servicio: | 1.Normal | 2.Prioritaria | 3.Urgente");
+            o.setPrioridad(sc.nextInt());
+            o.setEstado(1);
+            o.setVehiculo_Asignado(m.AsignarVehiculo(cola, o.getPeso()));
+            sc.nextLine();
+                System.out.println("¿Desea Agregar mas servicios 1 si , 2 no? ");
             int opt = sc.nextInt();
             if (opt == 2) {
                 System.out.println("Vuelva Pronto ^_^");
@@ -30,7 +39,27 @@ public class Metodos {
 
     }
 
-    public int ValidarTurno(Queue<ObjSancocho> cola) {
+    public String AsignarVehiculo(Queue<ObjServicio> cola, int peso){
+        String Mensaje = "";
+        for (ObjServicio o : cola) {
+            
+            if (o.getPeso() <= 100000 && o.getPeso() >=80001 ) {
+                Mensaje = "Tractomula A";
+            }if (o.getPeso() <= 80000 && o.getPeso() >=30001 ) {
+                Mensaje ="Tractomula B";
+            }if (o.getPeso() <= 30000 && o.getPeso() >=10001 ) {
+                Mensaje = "Camión Mediano";
+            }if(o.getPeso() <= 10000 && o.getPeso() >=10 ){
+                Mensaje = "Camión Pequeño";
+            }
+            if (o.getPeso() <100000 ) {
+                Mensaje = "No tenemos vehiculos disponibles para esa capacidad (Peso)";
+            }
+        }
+        return Mensaje;
+    }
+
+    public int ValidarTurno(Queue<ObjServicio> cola) {
         int turno = 0;
         if (cola.isEmpty()) {
             turno = 1;
@@ -40,27 +69,27 @@ public class Metodos {
         return turno;
     }
 
-    public int MenuComida(Scanner sc) {
-    System.out.println("Bienvenido/a. ¿Cual es tú antojo para hoy?");
-        System.out.println("1) Sacocho de bagre");
-        System.out.println("2) sacocho trifasico");
-        System.out.println("3) Ajiaco");
-        System.out.println("4) Consome de Pollo");
-        System.out.println("5) Sancocho de costilla ");
-        System.out.println("6) Mondongo de la abuela ");
+    public int MenuDespacho(Scanner sc) {
+    System.out.println("Bienvenido/a. ¿Que vehiculo desea asignar?");
+        System.out.println("1) TractoMula A (Capacidad 100.000 Kgs)");
+        System.out.println("2) TractoMula B (Capacidad 80.000 Kgs)");
+        System.out.println("3) Camión Mediano (Capacidad 30.000 Kgs)");
+        System.out.println("4) Camión pequeño (Capacidad 10.000 Kgs) ");
         return sc.nextInt();
 
     }
 
-    public String MostrarTodosTurnos(Queue<ObjSancocho> cola, int opt) {
+    public String MostrarTodosTurnos(Queue<ObjServicio> cola, int opt) {
         switch (opt) {
             case 1:
-                for (ObjSancocho o : cola) {
-                    System.out.println("Turno: " +   o.getTurno());
-                    System.out.println(MenuSacochito(o.getName()));
-                    System.out.println("Cantidad: " +o.getCantidad());
-                    System.out.println("Precio: " +  o.getPrice());
-                    if (o.getEstate() == 1) {
+                for (ObjServicio o : cola) {
+                    System.out.println("Cliente ID: " +   o.getIdcliente());
+                    System.out.println("Origen: " + o.getOrigen());
+                    System.out.println("Destino: " + o.getDestino());
+                    System.out.println("Tipo de Mercancia: " +  o.getTipo_Mercancia());
+                    System.out.println("Peso Mercancia:" + o.getPeso());
+                    System.out.println("Vehiculo asignado: "+ o.getVehiculo_Asignado());
+                    if (o.getEstado() == 1) {
                         System.out.println("Estado: Pendiente");
                     } else {
                         System.out.println("Estado: Atendido");
@@ -71,15 +100,17 @@ public class Metodos {
 
                 break;
             case 2:
-                for (ObjSancocho o : cola) {
-                    if (o.getEstate() == 1) {
-                        System.out.println("Turno: " +    o.getTurno());
-                        System.out.println(MenuSacochito( o.getName()));
-                        System.out.println("Cantidad: " + o.getCantidad());
-                        System.out.println("Precio: " +   o.getPrice());
-                        if (o.getEstate() == 1) {
+                for (ObjServicio o : cola) {
+                    if (o.getEstado() == 1) {
+                    System.out.println("Cliente ID: " +   o.getIdcliente());
+                    System.out.println("Origen: " + o.getOrigen());
+                    System.out.println("Destino: " + o.getDestino());
+                    System.out.println("Tipo de Mercancia: " +  o.getTipo_Mercancia());
+                    System.out.println("Peso Mercancia:" + o.getPeso());
+                    System.out.println("Vehiculo asignado: "+ o.getVehiculo_Asignado());
+                    if (o.getEstado() == 1) {
                             System.out.println("Estado: Pendiente");
-                        } 
+                        }
                     }else {
                             System.out.println("No hay turnos Pendientes");
                         }
@@ -88,13 +119,15 @@ public class Metodos {
                 break;
 
             case 3:
-                for (ObjSancocho o : cola) {
-                    if (o.getEstate() != 1) {
-                        System.out.println("Turno: " +   o.getTurno());
-                        System.out.println(MenuSacochito(o.getName()));
-                        System.out.println("Cantidad: " +o.getCantidad());
-                        System.out.println("Precio: " +  o.getPrice());
-                        if (o.getEstate() == 1) {
+                for (ObjServicio o : cola) {
+                    if (o.getEstado() != 1) {
+                    System.out.println("Cliente ID: " +   o.getIdcliente());
+                    System.out.println("Origen: " + o.getOrigen());
+                    System.out.println("Destino: " + o.getDestino());
+                    System.out.println("Tipo de Mercancia: " +  o.getTipo_Mercancia());
+                    System.out.println("Peso Mercancia:" + o.getPeso());
+                    System.out.println("Vehiculo asignado: "+ o.getVehiculo_Asignado());
+                        if (o.getEstado() == 1) {
                             System.out.println("Estado: Pendiente");
                         }
                     }else {
@@ -110,37 +143,12 @@ public class Metodos {
         return "Datos mostrados correctamente";
     }
 
-    private static String MenuSacochito(int opt) {
-        String mensaje = "";
-        switch (opt) {
-            case 1:
-                mensaje = "Sacocho de bagre";
-                break;
-            case 2:
-                mensaje = "sacocho trifasico";
-                break;
-            case 3:
-                mensaje = "Ajiaco";
-                break;
-            case 4:
-                mensaje = "Consome de Pollo";
-                break;
-            case 5:
-                mensaje = "Sancocho de costilla ";
-                break;
 
-            default:
-                mensaje = "Mondongo de la abuela ";
-                break;
-        }
-        return mensaje;
-    }
-
-    public Queue<ObjSancocho> Atender(Queue<ObjSancocho> cola) {
-        for (ObjSancocho o : cola) {
-            if (o.getEstate() == 1) {
-                System.out.println("El siguiente turno es " + o.getTurno() + " con un pedido de :" + MenuSacochito(o.getName()));
-                o.setEstate(2);
+    public Queue<ObjServicio> Atender(Queue<ObjServicio> cola) {
+        for (ObjServicio o : cola) {
+            if (o.getEstado() == 1) {
+                System.out.println("El siguiente turno es " + o.getTurno());
+                o.setEstado(2);
                 break;
             }
         }
@@ -157,34 +165,12 @@ public class Metodos {
         return sc.nextInt();
     }
 
-    public Stack<ObjSancocho> Apilar(Queue<ObjSancocho> c, Stack<ObjSancocho> p) {
-        for (ObjSancocho o : c) {
-            if (o.getEstate() == 1) {
-                p.push(o);
-            }
-        }
-        return p;
-    }
 
-    public void MostrarPila(Stack<ObjSancocho> p) {
-        for (ObjSancocho o : p) {
-            System.out.println("Turno: " +   o.getTurno());
-            System.out.println(MenuSacochito(o.getName()));
-            System.out.println("Cantidad: " +o.getCantidad());
-            System.out.println("Precio: " +  o.getPrice());
-            if (o.getEstate() == 1) {
-                System.out.println("Estado: Pendiente");
-            }else {
-                System.out.println("Estado: Atendido");
-            }
-        }
-    }
-
-    public ObjSancocho[] ArregloAtendidos(Queue<ObjSancocho> c) {
-        ObjSancocho[] arreglo = new ObjSancocho[Dimension(c)];
+    public ObjServicio[] ArregloAtendidos(Queue<ObjServicio> c) {
+        ObjServicio[] arreglo = new ObjServicio[Dimension(c)];
         int i = 0;
-        for (ObjSancocho o : c) {
-            if (o.getEstate() != 1) {
+        for (ObjServicio o : c) {
+            if (o.getEstado() != 1) {
                 arreglo[i] = o;
                 i++;
             }
@@ -192,28 +178,37 @@ public class Metodos {
         return arreglo;
     }
 
-    private static int Dimension(Queue<ObjSancocho> c) {
+    private static int Dimension(Queue<ObjServicio> c) {
         int cont = 0;
-        for (ObjSancocho o : c) {
-            if (o.getEstate() != 1) {
+        for (ObjServicio o : c) {
+            if (o.getEstado() != 1) {
                 cont++;
             }
         }
         return cont;
     }
 
-    public void MostrarArreglo(ObjSancocho[] a) {
+    public void MostrarArreglo(ObjServicio[] a) {
         for (int i = 0; i < a.length; i++) {
-            System.out.println("Turno: "    + a[i].getTurno());
-            System.out.println(MenuSacochito( a[i].getName()));
-            System.out.println("Cantidad: " + a[i].getCantidad());
-            System.out.println("Precio: "   + a[i].getPrice());
-            if (a[i].getEstate() == 1) {
+            System.out.println("Cliente ID: "  + a[i].getIdcliente());
+            System.out.println("Origen"        + a[i].getOrigen());
+            System.out.println("Cantidad: "    + a[i].getDestino());
+            System.out.println("Tipo de mercancia: "      + a[i].getTipo_Mercancia());
+                if (a[i].getEstado() == 1) {
                 System.out.println("Estado: Pendiente");
-            } else {
+                } else {
                 System.out.println("Estado: Atendido");
-            }
+                }
         }
+    }
+
+    public int ValidarTipoMerca(Scanner sc) {
+        while (!sc.hasNextInt()) {
+            System.out.println(
+                    "Por favor tenga en cuenta que se le esta pidiendo un dato numerico ojala en el rango de 1 a 3 ");
+            sc.next();
+        }
+        return sc.nextInt();
     }
 
 }

@@ -6,15 +6,16 @@ import java.util.Stack;
 public class Menu {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        Queue<ObjSancocho> cola = new LinkedList<>();
-        Stack<ObjSancocho> pila = new Stack<>();
+        Queue<ObjServicio> cola = new LinkedList<>();
+        Stack<ObjServicio> pila = new Stack<>();
         Metodos m = new Metodos();
         boolean continuar = true;
         while (continuar) {
             System.out.println("Bienvenidos al parcial de Nacho lee 3 (Colas)");
             System.out.println("^_^ Padre, Hijo y espritud santo ^_^\n");
-            System.out.println("¿Que desea realizar?");
-            System.out.println("1| llenar Pedidos ");
+            System.out.println("Bienvenido al centro de Transporte Nacho Lee ^_^");
+            System.out.println("¿En que te podemos ayuar hoy?");
+            System.out.println("1| Crear solicitud de transporte -> ");
             System.out.println("2| Mostrar Todos los Pedidos ");
             System.out.println("3| Atender Turno ");
             System.out.println("4| Mostrar Pedidos Pendientes");
@@ -41,11 +42,10 @@ public class Menu {
 
                     break;
                 case 6:
-                    pila = m.Apilar(cola, pila);
-                    m.MostrarPila(pila);
+                   System.out.println("Pagina en mantenimiento X_X");
                     break;
                 case 7:
-                    ObjSancocho[] a = m.ArregloAtendidos(cola);
+                    ObjServicio[] a = m.ArregloAtendidos(cola);
                     m.MostrarArreglo(a);
                     break;
                 case 8:
